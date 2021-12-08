@@ -18,9 +18,6 @@ anchor.setProvider(anchor.Provider.env());
 export const program = anchor.workspace.AtlasVesting as Program<AtlasVesting>;
 export const wallet = program.provider.wallet;
 
-
-
-
 export const VESTING_DESTINATION_OWNER = new anchor.web3.PublicKey('-- dest owner here --');
 export const VESTING_TOKEN_MINT = new anchor.web3.PublicKey('-- TOKEN MINT ADDRESS here --');
 export const VESTING_TOKEN_DECIMAL = 9;

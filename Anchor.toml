@@ -10,3 +10,8 @@ wallet = "./test-keypair.json"
 
 [scripts]
 test = "ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
+create-global-state = "ts-mocha -p ./tsconfig.json -t 1000000 tests/**/create-global-state.ts"
+create-vesting = "ts-mocha -p ./tsconfig.json -t 1000000 tests/**/create-vesting.ts"
+deposit-vesting = "ts-mocha -p ./tsconfig.json -t 1000000 tests/**/deposit-vesting.ts"
+update-vesting = "ts-mocha -p ./tsconfig.json -t 1000000 tests/**/update-vesting.ts"
+withdraw-vesting = "ts-mocha -p ./tsconfig.json -t 1000000 tests/**/withdraw-vesting.ts"
