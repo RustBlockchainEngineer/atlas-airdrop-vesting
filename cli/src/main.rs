@@ -38,7 +38,7 @@ fn main() -> Result<()> {
     let client = Client::new_with_options(url, payer, CommitmentConfig::processed());
 
     // Run tests.
-    basic_2(&client, opts.basic_2_pid)?;
+    create_global_state(&client, opts.vesting_pid)?;
 
     // Success.
     Ok(())
