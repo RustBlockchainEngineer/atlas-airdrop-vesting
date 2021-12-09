@@ -1,8 +1,13 @@
 
 .anchor
 .DS_Store
-target
+target/bpfel-unknown-unknown
+target/debug
+target/deploy
+target/release
+target/rls
+target/.rustc_info.json
+target/CACHEDIR.TAG
 **/*.rs.bk
 node_modules
-test-keypair.json
 **/build

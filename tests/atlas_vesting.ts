@@ -55,7 +55,6 @@ describe('atlas_vesting', () => {
 
   it('Create Vesting', async () => {
     vestingTokenMint = await Token.createMint(program.provider.connection, payer, wallet.publicKey, null, 9, program.programId);
-    return;
     let [globalStateKey, globalStateKeyNonce] = await anchor.web3.PublicKey.findProgramAddress([Buffer.from(GLOBAL_STATE_TAG)], program.programId);
     let [vestingKey, vestingKeyNonce] = await anchor.web3.PublicKey.findProgramAddress([Buffer.from(VESTING_TAG), wallet.publicKey.toBuffer()], program.programId);
     let [vestingPoolKey, vestingPoolKeyNonce] = await anchor.web3.PublicKey.findProgramAddress([Buffer.from(VESTING_TAG), vestingKey.toBuffer()], program.programId);
@@ -80,7 +79,6 @@ describe('atlas_vesting', () => {
     });
     console.log('txid = ', tx);
   });
-  return;
   it('Update Vesting', async () => {
     let [globalStateKey, globalStateKeyNonce] = await anchor.web3.PublicKey.findProgramAddress([Buffer.from(GLOBAL_STATE_TAG)], program.programId);
     let [vestingKey, vestingKeyNonce] = await anchor.web3.PublicKey.findProgramAddress([Buffer.from(VESTING_TAG), wallet.publicKey.toBuffer()], program.programId);

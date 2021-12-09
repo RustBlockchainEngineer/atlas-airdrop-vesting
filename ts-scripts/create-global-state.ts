@@ -1,3 +1,4 @@
+import * as anchor from '@project-serum/anchor';
 import {
   GLOBAL_STATE_TAG,
   program,

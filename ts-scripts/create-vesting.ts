@@ -1,3 +1,4 @@
+import * as anchor from '@project-serum/anchor';
 import {
   GLOBAL_STATE_TAG,
   program,
@@ -20,7 +21,7 @@ export async function createVesting() {
     );
   let [vestingKey, vestingKeyNonce] =
     await anchor.web3.PublicKey.findProgramAddress(
-      [Buffer.from(VESTING_TAG), wallet.publicKey.toBuffer()],
+      [Buffer.from(VESTING_TAG), VESTING_DESTINATION_OWNER.toBuffer(), VESTING_TOKEN_MINT.toBuffer()],
       program.programId
     );
   let [vestingPoolKey, vestingPoolKeyNonce] =
