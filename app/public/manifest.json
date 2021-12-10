@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "AtlasDex",
+  "name": "Atlas Dex Solana Cross Chain Aggregator",
   "icons": [
     {
       "src": "favicon.ico",

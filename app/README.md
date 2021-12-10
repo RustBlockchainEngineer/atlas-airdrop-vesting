@@ -1,4 +1,1 @@
-how to run:
-
-yarn install
-yarn start
+# Atlas Dex Vesting Frontend

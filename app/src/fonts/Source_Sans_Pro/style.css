@@ -1,0 +1,48 @@
+@font-face {
+  font-family: "SourceSansPro Regular";
+  font-style: normal;
+  font-weight: normal;
+  src: url("SourceSansPro-Regular.ttf");
+}
+
+@font-face {
+  font-family: "SourceSansPro Italic";
+  font-style: normal;
+  font-weight: normal;
+  src: url("SourceSansPro-Italic.ttf");
+}
+
+@font-face {
+  font-family: "SourceSansPro ExtraLight";
+  font-style: normal;
+  font-weight: normal;
+  src: url("SourceSansPro-ExtraLight.ttf");
+}
+
+@font-face {
+  font-family: "SourceSansPro Light";
+  font-style: normal;
+  font-weight: normal;
+  src: url("SourceSansPro-Light.ttf");
+}
+
+@font-face {
+  font-family: "SourceSansPro SemiBold";
+  font-style: normal;
+  font-weight: normal;
+  src: url("SourceSansPro-SemiBold.ttf");
+}
+
+@font-face {
+  font-family: "SourceSansPro Bold";
+  font-style: normal;
+  font-weight: normal;
+  src: url("SourceSansPro-Bold.ttf");
+}
+
+@font-face {
+  font-family: "SourceSansPro Black";
+  font-style: normal;
+  font-weight: normal;
+  src: url("SourceSansPro-Black.ttf");
+}

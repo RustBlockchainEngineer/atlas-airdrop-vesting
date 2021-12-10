@@ -1,17 +1,44 @@
-import { SnackbarProvider } from "notistack";
-import React from "react";
-import { WalletProviders } from "./components/web3/WalletProviders";
-import MyRouter from "./routers/index";
+import React, { lazy } from 'react'
+import { Router, Route, Switch } from 'react-router-dom'
+import history from './routerHistory'
 
-function App() {
+import GlobalStyle from './style/Global'
+import PageLoader from './components/PageLoader'
+import SuspenseWithChunkError from './components/SuspenseWithChunkError'
+import Web3ReactManager from 'components/Web3ReactManager'
+import { useFetchPublicData } from 'state/hooks'
+// fonts
+import 'fonts/Montserrat/style.css'
+import 'fonts/Source_Sans_Pro/style.css'
+
+// styles
+import 'bootstrap/dist/css/bootstrap.min.css';
+import Menu from 'components/Menu'
+
+
+const Home = lazy(() => import('./views/Home'))
+
+const App: React.FC = () => {
+
+  useFetchPublicData()
+
   return (
-    <SnackbarProvider>
-      <WalletProviders>
-      <div className="bg-white text-base dark:bg-neutral-900 text-neutral-900 dark:text-neutral-200">
-        <MyRouter />
-      </div>
-    </WalletProviders>
-   </SnackbarProvider>
+    <Router history={history}>
+      <GlobalStyle />
+      <SuspenseWithChunkError fallback={<PageLoader />}>
+        <Menu>
+          <Web3ReactManager>
+            <Switch>
+              <Route path="/" exact>
+                <Home />
+              </Route>
+            </Switch>
+          </Web3ReactManager>
+        </Menu>
+      </SuspenseWithChunkError>
+
+    </Router>
   );
 }
+
 export default App;
