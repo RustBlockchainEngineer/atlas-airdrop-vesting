@@ -10,7 +10,7 @@ export const GLOBAL_STATE_TAG = "golbal-state-seed";
 export const VESTING_TAG = "vesting-seed";
 
 export const VESTING_PROGRAM_ID = new anchor.web3.PublicKey(
-  "J5bepnaUiZ5RR3NRKquGrePAMp9zbm9mHWqx7mvVdezy"
+  "zbXkRdxNFX4zuJK3EbEJGzKwwbVwxD9guAkXvbWiFF2"
 );
 export const TOKEN_PROGRAM_ID = new anchor.web3.PublicKey(
   "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
