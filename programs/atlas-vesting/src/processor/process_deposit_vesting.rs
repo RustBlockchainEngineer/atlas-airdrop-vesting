@@ -20,5 +20,7 @@ pub fn process_deposit_vesting(ctx: Context<DepositVesting>, amount: u64, global
 
     token::transfer(cpi_ctx, amount)?;
 
+    ctx.accounts.vesting.vested_token_amount += amount;
+
     Ok(())
 }

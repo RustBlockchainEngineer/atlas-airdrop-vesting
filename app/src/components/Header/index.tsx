@@ -8,8 +8,8 @@ import useViewport from "hooks/useViewport";
 import styled from "styled-components";
 import useTheme from "hooks/useTheme";
 import { useEffect, useState } from "react";
-import { useWalletState } from "state/hooks";
 import WalletModal from "./WalletModal";
+import { useWallet } from "contexts/wallet";
 
 const Header: React.FC = () => {
   const [visible, setVisible] = useState<boolean>(false);
@@ -18,8 +18,7 @@ const Header: React.FC = () => {
   const { theme } = useTheme();
   const { text } = theme.colors;
 
-  const { connected, publicKey } = useWalletState();
-
+  const { connected, publicKey, connect } = useWallet();
   useEffect(() => {
     setVisible(false);
   }, [connected]);
@@ -75,14 +74,10 @@ const Header: React.FC = () => {
           </Flex>
           <Flex justifyContent="center" width={isMobile ? "100%" : "auto"}>
             <StyledButton
-              onClick={() => {
-                if (!connected) {
-                  setVisible(true);
-                }
-              }}
+              onClick={connect}
             >
               {connected
-                ? publicKey.slice(0, 4) + "..." + publicKey.slice(-4)
+                ? publicKey.toBase58().slice(0, 4) + "..." + publicKey.toBase58().slice(-4)
                 : "Connect Wallet"}
             </StyledButton>
           </Flex>

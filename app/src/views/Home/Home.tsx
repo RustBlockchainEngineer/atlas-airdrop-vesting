@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Flex, Box } from "components/Box";
 import { Text } from "components/Text";
 import { Button } from "components/Button";
@@ -15,6 +15,10 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { useWallet } from "contexts/wallet";
+import { claimVesting, getVesting } from "utils/claim";
+import { useConnection } from "contexts/connection";
+import { VESTING_TOKEN_DECIMALS } from "utils/global";
 
 ChartJS.register(
   CategoryScale,
@@ -26,6 +30,8 @@ ChartJS.register(
 );
 
 const Home: React.FC = () => {
+  const connection = useConnection();
+  const { connect, connected, wallet } = useWallet();
   const { theme } = useTheme();
   const {
     backgroundAlt,
@@ -33,10 +39,84 @@ const Home: React.FC = () => {
     textSubtle,
     failure,
   } = theme.colors;
+  const [vesting, setVesting] = useState(null as any);
 
-  const [connected, setConnected] = useState(false);
-  const claim = async () =>{
+  useEffect(() => {
+    getVesting(connection, wallet)
+    .then((fetchedVesting) => {
+      setVesting(fetchedVesting);
+    });
+  }, [connected]);
+
+  const claim = async () => {
+    await claimVesting(connection, wallet);
+  }
+  const getVestingStartDate = () => {
+    if (vesting) {
+      const startTimestamp = vesting.startTime.toNumber();
+      const startDate = new Date(startTimestamp * 1000);
+      return startDate.toDateString();
+    } else {
+      return '-'
+    }
+  }
+  const getVestingEndDate = () => {
+    if (vesting) {
+      const endTimestamp = vesting.endTime.toNumber();
+      const endDate = new Date(endTimestamp * 1000);
+      return endDate.toDateString();
+    } else {
+      return '-';
+    }
+  }
+  const getInitialLockedTokens = () => {
+    if (vesting) {
+      const vestedTokenAmount = vesting.vestedTokenAmount.toNumber();
+      return ( vestedTokenAmount / Math.pow(10, VESTING_TOKEN_DECIMALS)).toFixed(2);
+    } else {
+      return '0';
+    }
+  }
+  const getClaimedTokens = () => {
+    if (vesting) {
+      const claimedTokenAmount = vesting.claimedTokenAmount.toNumber();
+      return ( claimedTokenAmount / Math.pow(10, VESTING_TOKEN_DECIMALS)).toFixed(2);
+    } else {
+      return '0';
+    }
+  }
+  const getAvailableTokens = () => {
+    if (vesting) {
+      let pendingDuration = 0;
+      const currentTime = Date.now() / 1000;
+      if (currentTime > vesting.endTime.toNumber()) {
+          pendingDuration = vesting.endTime.toNumber() - vesting.lastTime.toNumber();
+      }
+      else if (currentTime > vesting.lastTime.toNumber()) {
+        pendingDuration = currentTime - vesting.lastTime.toNumber();
+      }
+
+      let remainedDuration = 0;
+      if (vesting.lastTime.toNumber() < vesting.endTime.toNumber() && vesting.lastTime.toNumber() > vesting.startTime.toNumber()) {
+        remainedDuration = vesting.endTime.toNumber() - vesting.lastTime.toNumber();
+      }
+      let remainedAmount = vesting.vestedTokenAmount.toNumber() - vesting.claimedTokenAmount.toNumber();
+      let pending = remainedAmount * pendingDuration / remainedDuration;
+
+      return (pending/ Math.pow(10, VESTING_TOKEN_DECIMALS)).toFixed(4);
+    } else {
+      return '0';
+    }
     
+  }
+  const getLockedTokens = () => {
+    if (vesting) {
+      const vestedTokenAmount = getInitialLockedTokens();
+      const availableTokenAmount = getAvailableTokens();
+      return parseFloat(vestedTokenAmount) - parseFloat(availableTokenAmount);
+    } else {
+      return 0;
+    }
   }
   const rowJSX = (text_1, text_2) => (
     <Flex mt="0.5rem">
@@ -98,12 +178,12 @@ const Home: React.FC = () => {
           {connected ? (
             <>
               <Box mt="10px">
-                {rowJSX("Initial Locked Tokens", 1000)}
-                {rowJSX("Vesting Start Date", "19.05.18")}
-                {rowJSX("Vesting End Date", "19.06.18")}
-                {rowJSX("Claimed Tokens", 1000)}
-                {rowJSX("Available Tokens", 1000)}
-                {rowJSX("Locked Tokens", 300)}
+                {rowJSX("Initial Locked Tokens", getInitialLockedTokens())}
+                {rowJSX("Vesting Start Date", getVestingStartDate())}
+                {rowJSX("Vesting End Date", getVestingEndDate())}
+                {rowJSX("Claimed Tokens", getClaimedTokens())}
+                {rowJSX("Available Tokens", getAvailableTokens())}
+                {rowJSX("Locked Tokens", getLockedTokens())}
               </Box>
 
               <Flex mt="0.6rem" justifyContent="center" alignItems="center">
@@ -131,7 +211,7 @@ const Home: React.FC = () => {
               <Text color={failure} fontFamily="SourceSansPro Light" mt="4px">
                 Please connect your wallet to see your claim status
               </Text>
-              <StyledButton onClick={() => setConnected(true)}>
+              <StyledButton onClick={() => connect}>
                 Connect Wallet
               </StyledButton>
             </Flex>

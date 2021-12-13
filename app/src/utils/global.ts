@@ -1,13 +1,16 @@
 import * as anchor from "@project-serum/anchor";
+import { initializeAccount } from '@project-serum/serum/lib/token-instructions'
 
 import { AtlasVesting } from "./vesting-types";
 import idl from "./vesting-idl.json";
+import { AccountLayout } from "@solana/spl-token";
+import { SystemProgram } from "@solana/web3.js";
 
 export const GLOBAL_STATE_TAG = "golbal-state-seed";
 export const VESTING_TAG = "vesting-seed";
 
 export const VESTING_PROGRAM_ID = new anchor.web3.PublicKey(
-  "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
+  "J5bepnaUiZ5RR3NRKquGrePAMp9zbm9mHWqx7mvVdezy"
 );
 export const TOKEN_PROGRAM_ID = new anchor.web3.PublicKey(
   "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
@@ -26,6 +29,7 @@ export const SYSTEM_PROGRAM_ID = new anchor.web3.PublicKey(
 export const VESTING_TOKEN_MINT = new anchor.web3.PublicKey(
   "3zigDLS2S1hoLt1CGekwVethRLhHmLnWMqyrkofu17Jw"
 );
+export const VESTING_TOKEN_DECIMALS = 9;
 
 export function getProgram(
   connection: anchor.web3.Connection,
@@ -67,4 +71,76 @@ export async function checkWalletATA(
     }
   })
   return result
+}
+export async function createTokenAccountIfNotExist(
+  connection: anchor.web3.Connection,
+  account: string | undefined | null,
+  owner: anchor.web3.PublicKey,
+  mintAddress: string,
+  lamports: number | null,
+
+  instructions: anchor.web3.TransactionInstruction[],
+  signer: Array<anchor.web3.Keypair>
+) {
+  let publicKey
+
+  if (account) {
+    publicKey = new anchor.web3.PublicKey(account)
+  } else {
+    publicKey = await createProgramAccountIfNotExist(
+      connection,
+      account,
+      owner,
+      TOKEN_PROGRAM_ID,
+      lamports,
+      AccountLayout,
+      instructions,
+      signer
+    )
+
+    instructions.push(
+      initializeAccount({
+        account: publicKey,
+        mint: new anchor.web3.PublicKey(mintAddress),
+        owner
+      })
+    )
+  }
+
+  return publicKey
+}
+
+export async function createProgramAccountIfNotExist(
+  connection: anchor.web3.Connection,
+  account: string | undefined | null,
+  owner: anchor.web3.PublicKey,
+  programId: anchor.web3.PublicKey,
+  lamports: number | null,
+  layout: any,
+
+  instructions: anchor.web3.TransactionInstruction[],
+  signer: Array<anchor.web3.Keypair>
+) {
+  let publicKey
+
+  if (account) {
+    publicKey = new anchor.web3.PublicKey(account)
+  } else {
+    const newAccount = new anchor.web3.Keypair()
+    publicKey = newAccount.publicKey
+
+    instructions.push(
+      SystemProgram.createAccount({
+        fromPubkey: owner,
+        newAccountPubkey: publicKey,
+        lamports: lamports ?? (await connection.getMinimumBalanceForRentExemption(layout.span)),
+        space: layout.span,
+        programId
+      })
+    )
+
+    signer.push(newAccount)
+  }
+
+  return publicKey
 }

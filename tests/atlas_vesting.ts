@@ -20,6 +20,7 @@ describe('atlas_vesting', () => {
   anchor.setProvider(anchor.Provider.env());
 
   const program = anchor.workspace.AtlasVesting as Program<AtlasVesting>;
+  console.log('program id = ',program.programId.toBase58());
   const wallet = program.provider.wallet;
   const destinationOwner = anchor.web3.Keypair.generate();
 

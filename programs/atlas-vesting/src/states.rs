@@ -21,6 +21,8 @@ pub struct Vesting {
     pub start_time: u64,
     pub end_time: u64,
     pub last_time: u64,
+    pub vested_token_amount: u64,
+    pub claimed_token_amount: u64
 }
 impl Vesting {
     pub fn assert_valid_time(&self, cur_time: u64)->ProgramResult {

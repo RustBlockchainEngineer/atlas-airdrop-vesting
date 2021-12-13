@@ -34,5 +34,7 @@ pub fn process_withdraw_vesting(ctx: Context<WithdrawVesting>, amount: u64, glob
     let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer);
     token::transfer(cpi_ctx, _amount)?;
 
+    ctx.accounts.vesting.vested_token_amount -= _amount;
+
     Ok(())
 }

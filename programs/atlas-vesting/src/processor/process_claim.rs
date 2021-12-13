@@ -33,6 +33,7 @@ pub fn process_claim(ctx: Context<Claim>, global_state_nonce:u8, vesting_nonce:u
     token::transfer(cpi_ctx, amount)?;
 
     ctx.accounts.vesting.update_last_time(cur_time);
-
+    ctx.accounts.vesting.claimed_token_amount + amount;
+    
     Ok(())
 }
