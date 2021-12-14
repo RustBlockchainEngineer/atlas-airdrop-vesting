@@ -11,7 +11,6 @@ wallet = "./test-keypair.json"
 [scripts]
 test = "ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"
 create-global-state = "ts-mocha -p ./tsconfig.json -t 1000000 ts-scripts/create-global-state.ts"
-create-vesting = "ts-mocha -p ./tsconfig.json -t 1000000 ts-scripts/create-vesting.ts"
 deposit-vesting = "ts-mocha -p ./tsconfig.json -t 1000000 ts-scripts/deposit-vesting.ts"
 update-vesting = "ts-mocha -p ./tsconfig.json -t 1000000 ts-scripts/update-vesting.ts"
 withdraw-vesting = "ts-mocha -p ./tsconfig.json -t 1000000 ts-scripts/withdraw-vesting.ts"
