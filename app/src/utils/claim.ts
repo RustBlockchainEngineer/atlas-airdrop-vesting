@@ -100,6 +100,9 @@ export async function getVesting(
   connection: anchor.web3.Connection,
   wallet: any
 ) {
+  if(!wallet.publicKey){
+    return null;
+  }
   const program = getProgram(connection, wallet, VESTING_PROGRAM_ID);
 
   let [

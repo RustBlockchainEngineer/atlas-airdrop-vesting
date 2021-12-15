@@ -27,7 +27,7 @@ export const SYSTEM_PROGRAM_ID = new anchor.web3.PublicKey(
 
 
 export const VESTING_TOKEN_MINT = new anchor.web3.PublicKey(
-  "3zigDLS2S1hoLt1CGekwVethRLhHmLnWMqyrkofu17Jw"
+  "9yoc8eSWhCXV4ddcGoRLkSUToFgSDRbJ98hvXs516D1y"
 );
 export const VESTING_TOKEN_DECIMALS = 9;
 

@@ -42,10 +42,12 @@ impl Vesting {
         }
 
         let mut remained_duration = 0;
-        if self.last_time < self.end_time && self.last_time > self.start_time {
+        if self.last_time <= self.end_time && self.last_time >= self.start_time {
             remained_duration = self.end_time - self.last_time;
         }
-
+        if remained_duration == 0 {
+            return 0;
+        }
         let pending = remained_amount * pending_duration / remained_duration;
 
         return pending;

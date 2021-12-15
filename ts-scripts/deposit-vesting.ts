@@ -21,13 +21,14 @@ export async function isVestingCreated() {
       [Buffer.from(VESTING_TAG), VESTING_DESTINATION_OWNER.toBuffer(), VESTING_TOKEN_MINT.toBuffer()],
       program.programId
     );
-  const vesting = program.account.vesting.fetchNullable(vestingKey);
+  const vesting = await program.account.vesting.fetchNullable(vestingKey);
   if(vesting){
     return true;
   }
   return false;
 }
 export async function createVesting() {
+  console.log('creating ...')
   let [globalStateKey, globalStateKeyNonce] =
     await anchor.web3.PublicKey.findProgramAddress(
       [Buffer.from(GLOBAL_STATE_TAG)],
@@ -67,6 +68,7 @@ export async function createVesting() {
 }
 
 export async function depositVesting() {
+  console.log('depositing ...')
   let [globalStateKey, globalStateKeyNonce] =
     await anchor.web3.PublicKey.findProgramAddress(
       [Buffer.from(GLOBAL_STATE_TAG)],

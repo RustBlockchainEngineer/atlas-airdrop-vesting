@@ -50,6 +50,11 @@ const Home: React.FC = () => {
 
   const claim = async () => {
     await claimVesting(connection, wallet);
+    
+    getVesting(connection, wallet)
+    .then((fetchedVesting) => {
+      setVesting(fetchedVesting);
+    });
   }
   const getVestingStartDate = () => {
     if (vesting) {
@@ -97,7 +102,7 @@ const Home: React.FC = () => {
       }
 
       let remainedDuration = 0;
-      if (vesting.lastTime.toNumber() < vesting.endTime.toNumber() && vesting.lastTime.toNumber() > vesting.startTime.toNumber()) {
+      if (vesting.lastTime.toNumber() <= vesting.endTime.toNumber() && vesting.lastTime.toNumber() >= vesting.startTime.toNumber()) {
         remainedDuration = vesting.endTime.toNumber() - vesting.lastTime.toNumber();
       }
       let remainedAmount = vesting.vestedTokenAmount.toNumber() - vesting.claimedTokenAmount.toNumber();

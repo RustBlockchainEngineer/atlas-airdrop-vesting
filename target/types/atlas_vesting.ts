@@ -434,6 +434,14 @@ export type AtlasVesting = {
           {
             "name": "lastTime",
             "type": "u64"
+          },
+          {
+            "name": "vestedTokenAmount",
+            "type": "u64"
+          },
+          {
+            "name": "claimedTokenAmount",
+            "type": "u64"
           }
         ]
       }
@@ -913,6 +921,14 @@ export const IDL: AtlasVesting = {
           },
           {
             "name": "lastTime",
+            "type": "u64"
+          },
+          {
+            "name": "vestedTokenAmount",
+            "type": "u64"
+          },
+          {
+            "name": "claimedTokenAmount",
             "type": "u64"
           }
         ]
