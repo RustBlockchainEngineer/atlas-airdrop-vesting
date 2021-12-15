@@ -118,7 +118,8 @@ const Home: React.FC = () => {
     if (vesting) {
       const vestedTokenAmount = getInitialLockedTokens();
       const availableTokenAmount = getAvailableTokens();
-      return parseFloat(vestedTokenAmount) - parseFloat(availableTokenAmount);
+      const claimedTokenAmount = getClaimedTokens();
+      return parseFloat(vestedTokenAmount) - parseFloat(availableTokenAmount) - parseFloat(claimedTokenAmount);
     } else {
       return 0;
     }
