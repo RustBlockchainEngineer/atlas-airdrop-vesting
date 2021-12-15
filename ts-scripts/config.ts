@@ -16,14 +16,14 @@ export const RENT_SYSVAR_ID = new anchor.web3.PublicKey('SysvarRent1111111111111
 export const CLOCK_SYSVAR_ID = new anchor.web3.PublicKey('SysvarC1ock11111111111111111111111111111111');
 export const SYSTEM_PROGRAM_ID = new anchor.web3.PublicKey('11111111111111111111111111111111');
 
-export const VESTING_DESTINATION_OWNER = new anchor.web3.PublicKey('GwvdQHPp91gC3d6uVMVxSpRw1qSCP5TNBAti9agVgRx5');//-- dest owner here --
+export const VESTING_DESTINATION_OWNER = new anchor.web3.PublicKey('DQoHjCNZN8hhhh721ZFc9mbJ9yued7YYspJw7nF19fv4');//-- dest owner here --
 export const VESTING_TOKEN_MINT = new anchor.web3.PublicKey('9yoc8eSWhCXV4ddcGoRLkSUToFgSDRbJ98hvXs516D1y');//-- TOKEN MINT ADDRESS here --
 export const VESTING_TOKEN_DECIMAL = 9;
 
 const currentTime = Date.now() / 1000;
-export const VESTING_START_TIME = currentTime+30;
+export const VESTING_START_TIME = currentTime - 1200;
 export const VESTING_END_TIME = VESTING_START_TIME + 7200;
-export const UPDATED_VESTING_END_TIME = VESTING_END_TIME + 3600 * 3;
+export const UPDATED_VESTING_END_TIME = VESTING_END_TIME + 3600 * 24 * 3;
 
 export const DEPOSIT_AMOUNT = new anchor.BN(1000 * Math.pow(10, VESTING_TOKEN_DECIMAL));
 export const DEPOSIT_TOKEN_ACCOUNT = new anchor.web3.PublicKey('5rjEtA6Gvo5MkbDKRS7RNsSVm3m9aC1Nhhvo7hEE1pX4');//-- vesting token account here --

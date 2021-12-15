@@ -46,7 +46,7 @@ const Home: React.FC = () => {
     .then((fetchedVesting) => {
       setVesting(fetchedVesting);
     });
-  }, [connected]);
+  }, [connection, wallet]);
 
   const claim = async () => {
     await claimVesting(connection, wallet);

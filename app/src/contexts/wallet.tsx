@@ -71,7 +71,6 @@ const WalletContext = React.createContext<{
 export function WalletProvider({ children = null as any }) {
   const { endpoint } = useConnectionConfig();
 
-  const [autoConnect, setAutoConnect] = useLocalStorageState('autoConnect');
   const [providerUrl, setProviderUrl] = useLocalStorageState('walletProvider');
 
   const provider = useMemo(() => WALLET_PROVIDERS.find(({ url }) => url === providerUrl), [providerUrl]);
@@ -125,14 +124,6 @@ export function WalletProvider({ children = null as any }) {
     };
   }, [wallet]);
 
-  useEffect(() => {
-    if (wallet && autoConnect) {
-      wallet.connect();
-      setAutoConnect(false);
-    }
-
-    return () => {};
-  }, [wallet, autoConnect]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
 
@@ -163,7 +154,6 @@ export function WalletProvider({ children = null as any }) {
           {WALLET_PROVIDERS.map((provider, index) => {
             const onClick = function () {
               setProviderUrl(provider.url);
-              setAutoConnect(true);
               close();
             };
 
