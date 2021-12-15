@@ -25,8 +25,8 @@ export const VESTING_START_TIME = currentTime+30;
 export const VESTING_END_TIME = VESTING_START_TIME + 7200;
 export const UPDATED_VESTING_END_TIME = VESTING_END_TIME + 700;
 
-export const DEPOSIT_AMOUNT = new anchor.BN(7 * Math.pow(1000, VESTING_TOKEN_DECIMAL));
+export const DEPOSIT_AMOUNT = new anchor.BN(1000 * Math.pow(10, VESTING_TOKEN_DECIMAL));
 export const DEPOSIT_TOKEN_ACCOUNT = new anchor.web3.PublicKey('5rjEtA6Gvo5MkbDKRS7RNsSVm3m9aC1Nhhvo7hEE1pX4');//-- vesting token account here --
 
-export const WITHDRAW_AMOUNT = new anchor.BN(1 * Math.pow(100, VESTING_TOKEN_DECIMAL));
+export const WITHDRAW_AMOUNT = new anchor.BN(100 * Math.pow(10, VESTING_TOKEN_DECIMAL));
 export const WITHDRAW_TOKEN_ACCOUNT = new anchor.web3.PublicKey('5rjEtA6Gvo5MkbDKRS7RNsSVm3m9aC1Nhhvo7hEE1pX4');//-- vesting token account here --

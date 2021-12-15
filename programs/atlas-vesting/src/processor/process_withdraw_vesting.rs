@@ -1,12 +1,12 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self,  Transfer, TokenAccount,  ID};
+use anchor_spl::token::{self,  Transfer};
 
 use crate::{
     constant::*,
     instructions::*
 };
  
-pub fn process_withdraw_vesting(ctx: Context<WithdrawVesting>, amount: u64, global_state_nonce:u8, vesting_nonce:u8, vesting_pool_nonce: u8) -> ProgramResult {
+pub fn process_withdraw_vesting(ctx: Context<WithdrawVesting>, amount: u64, _global_state_nonce:u8, _vesting_nonce:u8, _vesting_pool_nonce: u8) -> ProgramResult {
     msg!("withdrawing ...");
     
     let mut _amount = amount;
@@ -27,7 +27,7 @@ pub fn process_withdraw_vesting(ctx: Context<WithdrawVesting>, amount: u64, glob
         VESTING_TAG, 
         ctx.accounts.vesting.destination_owner.as_ref(), 
         ctx.accounts.vesting.mint_vesting_token.as_ref(),
-        &[vesting_nonce]
+        &[_vesting_nonce]
     ];
     let signer = &[&signer_seeds[..]];
 
