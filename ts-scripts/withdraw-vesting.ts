@@ -1,5 +1,6 @@
 import * as anchor from "@project-serum/anchor";
 import {
+  checkWalletATA,
   GLOBAL_STATE_TAG,
   program,
   RENT_SYSVAR_ID,
@@ -10,7 +11,6 @@ import {
   VESTING_TOKEN_MINT,
   wallet,
   WITHDRAW_AMOUNT,
-  WITHDRAW_TOKEN_ACCOUNT,
 } from "./config";
 
 export async function withdrawVesting() {
@@ -33,6 +33,11 @@ export async function withdrawVesting() {
       [Buffer.from(VESTING_TAG), vestingKey.toBuffer()],
       program.programId
     );
+  const withdrawTokenAccount = await checkWalletATA(program.provider.connection, program.provider.wallet.publicKey, VESTING_TOKEN_MINT.toBase58())
+  if (withdrawTokenAccount === null) {
+    console.log('user does not have ata')
+    return;
+  }
   const tx = await program.rpc.withdrawVesting(
     WITHDRAW_AMOUNT,
     globalStateKeyNonce,
@@ -44,7 +49,7 @@ export async function withdrawVesting() {
         vesting: vestingKey,
         globalState: globalStateKey,
         poolVestingToken: vestingPoolKey,
-        userVestingToken: WITHDRAW_TOKEN_ACCOUNT,
+        userVestingToken: withdrawTokenAccount,
         destinationOwner: VESTING_DESTINATION_OWNER,
         mintVestingToken: VESTING_TOKEN_MINT,
         systemProgram: SYSTEM_PROGRAM_ID,

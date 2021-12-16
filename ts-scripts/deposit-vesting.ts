@@ -1,6 +1,5 @@
 import * as anchor from "@project-serum/anchor";
 import {
-  DEPOSIT_TOKEN_ACCOUNT,
   GLOBAL_STATE_TAG,
   program,
   RENT_SYSVAR_ID,
@@ -13,6 +12,7 @@ import {
   wallet,
   VESTING_START_TIME,
   VESTING_END_TIME,
+  checkWalletATA,
 } from "./config";
 
 export async function isVestingCreated() {
@@ -88,6 +88,11 @@ export async function depositVesting() {
       [Buffer.from(VESTING_TAG), vestingKey.toBuffer()],
       program.programId
     );
+  const depositTokenAccount = await checkWalletATA(program.provider.connection, program.provider.wallet.publicKey, VESTING_TOKEN_MINT.toBase58())
+  if (depositTokenAccount === null) {
+    console.log('user does not have any vesting token')
+    return;
+  }
   const tx = await program.rpc.depositVesting(
     DEPOSIT_AMOUNT,
     globalStateKeyNonce,
@@ -99,7 +104,7 @@ export async function depositVesting() {
         vesting: vestingKey,
         globalState: globalStateKey,
         poolVestingToken: vestingPoolKey,
-        userVestingToken: DEPOSIT_TOKEN_ACCOUNT,
+        userVestingToken: depositTokenAccount,
         destinationOwner: VESTING_DESTINATION_OWNER,
         mintVestingToken: VESTING_TOKEN_MINT,
         systemProgram: SYSTEM_PROGRAM_ID,
