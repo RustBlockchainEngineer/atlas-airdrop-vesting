@@ -19,6 +19,8 @@ import { useWallet } from "contexts/wallet";
 import { claimVesting, getVesting } from "utils/claim";
 import { useConnection } from "contexts/connection";
 import { VESTING_TOKEN_DECIMALS } from "utils/global";
+import { showMessage } from "utils/notifications";
+import TimerComponent from "./components/TimerWrapper";
 
 ChartJS.register(
   CategoryScale,
@@ -41,20 +43,63 @@ const Home: React.FC = () => {
   } = theme.colors;
   const [vesting, setVesting] = useState(null as any);
 
+  const [isRefresh, setIsRefresh] = useState(false);
+  const [isPriceLoading, setPriceLoading] = useState(true);
+
+  const [vestingStartDate, setVestingStartDate] = useState('');
+  const [vestingEndDate, setVestingEndDate] = useState('');
+  const [initialLockedToken, setInitialLockedToken] = useState('0');
+  const [claimedTokens, setClaimedTokens] = useState('0');
+  const [lockedTokens, setLockedTokens] = useState(0);
+  const [availableTokens, setAvailableTokens] = useState('0');
+
   useEffect(() => {
-    getVesting(connection, wallet)
-    .then((fetchedVesting) => {
-      setVesting(fetchedVesting);
-    });
+    fetchVesting();
   }, [connected]);
 
+  const fetchVesting = () => {
+    try {
+      console.log('Called');
+      setPriceLoading(true);
+      getVesting(connection, wallet)
+        .then((fetchedVesting) => {
+          setVesting(fetchedVesting);
+          setTimeout(() => {
+            setVestingStartDate(getVestingStartDate());
+            setVestingEndDate(getVestingEndDate());
+            setInitialLockedToken(getInitialLockedTokens());
+            setClaimedTokens(getClaimedTokens());
+            setAvailableTokens(getAvailableTokens());
+            setLockedTokens(getLockedTokens());
+            setPriceLoading(false);
+          }, 1000);
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  useEffect(() => {
+    fetchVesting();
+  }, [
+    isRefresh
+  ]);
+
   const claim = async () => {
-    await claimVesting(connection, wallet);
-    
-    getVesting(connection, wallet)
-    .then((fetchedVesting) => {
-      setVesting(fetchedVesting);
-    });
+    try {
+      await claimVesting(connection, wallet);
+
+      getVesting(connection, wallet)
+        .then((fetchedVesting) => {
+          setVesting(fetchedVesting);
+          showMessage({ description: 'Claim Complete', type: 'success' });
+        })
+        .catch((err) => {
+          showMessage({ description: 'Error', type: 'error' });
+        });
+    } catch (error) {
+      showMessage({ description: 'Error', type: 'error' });
+    }
   }
   const getVestingStartDate = () => {
     if (vesting) {
@@ -177,6 +222,13 @@ const Home: React.FC = () => {
 
       >
         <Box height='100%' p="14px" width="100%" background={backgroundGradient}>
+          {
+            connected ? (
+              <>
+                <TimerComponent setIsRefresh={setIsRefresh} isRefresh={isRefresh} isPriceLoading={isPriceLoading}/>
+              </>
+            ) : ''
+          }
           <Text fontFamily="Montserrat Bold" fontSize="16px">
             Vesting
           </Text>
@@ -184,17 +236,17 @@ const Home: React.FC = () => {
           {connected ? (
             <>
               <Box mt="10px">
-                {rowJSX("Initial Locked Tokens", getInitialLockedTokens())}
-                {rowJSX("Vesting Start Date", getVestingStartDate())}
-                {rowJSX("Vesting End Date", getVestingEndDate())}
-                {rowJSX("Claimed Tokens", getClaimedTokens())}
-                {rowJSX("Available Tokens", getAvailableTokens())}
-                {rowJSX("Locked Tokens", getLockedTokens())}
+                {rowJSX("Initial Locked Tokens", initialLockedToken)}
+                {rowJSX("Vesting Start Date", vestingStartDate)}
+                {rowJSX("Vesting End Date", vestingEndDate)}
+                {rowJSX("Claimed Tokens", claimedTokens)}
+                {rowJSX("Available Tokens", availableTokens)}
+                {rowJSX("Locked Tokens", lockedTokens)}
               </Box>
 
-              <Flex mt="0.6rem" justifyContent="center" alignItems="center">
+              {/* <Flex mt="0.6rem" justifyContent="center" alignItems="center">
                 <Bar options={options} data={data} />
-              </Flex>
+              </Flex> */}
               <Flex justifyContent="center" alignItems="center" mt="1rem">
                 <ButtonQuote onClick={() => claim()}>Claim</ButtonQuote>
               </Flex>
@@ -217,9 +269,6 @@ const Home: React.FC = () => {
               <Text color={failure} fontFamily="SourceSansPro Light" mt="4px">
                 Please connect your wallet to see your claim status
               </Text>
-              <StyledButton onClick={() => connect}>
-                Connect Wallet
-              </StyledButton>
             </Flex>
           )}
         </Box>

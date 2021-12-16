@@ -2,15 +2,20 @@ import type { PublicKey } from '@solana/web3.js';
 
 import Wallet from '@project-serum/sol-wallet-adapter';
 import { Transaction } from '@solana/web3.js';
-import { Button, Modal } from 'react-bootstrap';
+import { Button, Modal, Form } from 'react-bootstrap';
 import EventEmitter from 'eventemitter3';
 import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import { AiOutlineClose } from "react-icons/ai";
+import { Box, Flex } from "components/Box";
+import { Text } from "components/Text";
 import { notify } from './../utils/notifications';
+import styled from "styled-components";
 import { useConnectionConfig } from './connection';
 import { useLocalStorageState } from './../utils/utils';
 import { LedgerWalletAdapter } from '../wallet-adapters/ledger';
 import { SolongWalletAdapter } from '../wallet-adapters/solong';
 import { PhantomWalletAdapter } from '../wallet-adapters/phantom';
+import useTheme from "hooks/useTheme";
 
 const ASSETS_URL = 'https://raw.githubusercontent.com/solana-labs/oyster/main/assets/wallets/';
 export const WALLET_PROVIDERS = [
@@ -70,7 +75,8 @@ const WalletContext = React.createContext<{
 
 export function WalletProvider({ children = null as any }) {
   const { endpoint } = useConnectionConfig();
-
+  const { theme } = useTheme();
+  const { colors } = theme;
   const [autoConnect, setAutoConnect] = useLocalStorageState('autoConnect');
   const [providerUrl, setProviderUrl] = useLocalStorageState('walletProvider');
 
@@ -86,6 +92,23 @@ export function WalletProvider({ children = null as any }) {
   );
 
   const [connected, setConnected] = useState(false);
+  const [searched, setSearched] = useState(WALLET_PROVIDERS);
+  function search(str, strArray) {
+    let result = [];
+    for (var j = 0; j < strArray.length; j++) {
+      if (strArray[j].name.toLocaleLowerCase().indexOf(str.toLocaleLowerCase()) > -1) {
+        console.log(strArray[j].symbol);
+        result.push(j);
+      }
+    }
+    if (result.length > 0) {
+      console.log(result);
+
+      let newArr = result.map((e) => WALLET_PROVIDERS[e]);
+
+      return setSearched(newArr);
+    }
+  }
 
   useEffect(() => {
     if (wallet) {
@@ -152,38 +175,81 @@ export function WalletProvider({ children = null as any }) {
       <Modal
         show={isModalVisible}
         onHide={close}
-        size="lg"
         aria-labelledby="contained-modal-title-vcenter"
-        className="walletProviderModal"
+        centered
       >
-        <Modal.Header closeButton>
-          <p className="walletProviderModal__header">Connect to a wallet</p>
-        </Modal.Header>
-        <Modal.Body>
-          {WALLET_PROVIDERS.map((provider, index) => {
-            const onClick = function () {
-              setProviderUrl(provider.url);
-              setAutoConnect(true);
-              close();
-            };
-
-            return (
-              <Button size="lg" onClick={onClick} className="walletProviderModal__button d-block" key={index}>
-                <img alt={`${provider.name}`} width={20} height={20} src={provider.icon} style={{ marginRight: 8 }} />
-                {provider.name}
-              </Button>
-            );
-          })}
+        <Modal.Body style={{ background: colors.backgroundGradient }}>
+          <Flex alignItems="center">
+            <Text fontFamily="Montserrat SemiBold" fontSize="18px">
+              Connect Wallet(s)
+            </Text>
+            <AiOutlineClose
+              onClick={() => setIsModalVisible(false)}
+              color={colors.text}
+              size={20}
+              className="ms-auto"
+            />
+          </Flex>
+          <Box>
+          <Box p="20px">
+            <Flex justifyContent="center" flexDirection="column">
+            <InputFiled
+                placeholder="Search"
+                onChange={(e: any) => search(e.target.value, WALLET_PROVIDERS)}
+              />
+              <Box maxHeight="200px" overflowX="hidden">
+                {searched.map((provider, index) => {
+                  const onClick = function () {
+                    setProviderUrl(provider.url);
+                    setAutoConnect(true);
+                    close();
+                  };
+                  return(
+                  <Flex
+                    m="18px 0"
+                    key={`${Date.now()}${index}`}
+                    alignItems="center"
+                    style={{ cursor: "pointer" }}
+                    onClick={onClick}
+                  >
+                    <img
+                      src={provider.icon}
+                      width="24px"
+                      style={{
+                        borderRadius: provider.name === "Metamask" ? "0" : "50%",
+                      }}
+                      alt=""
+                    />
+                    <Text ml="10px" fontFamily="Montserrat SemiBold">
+                      {provider.name}
+                    </Text>
+                  </Flex>
+                  )
+                })}
+              </Box>
+            </Flex>
+          </Box>
+        </Box>
         </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={close} className="walletProviderModal__closeBtn">
-            Close
-          </Button>
-        </Modal.Footer>
       </Modal>
     </WalletContext.Provider>
   );
 }
+
+const InputFiled = styled(Form.Control)`
+  border-radius: 8px;
+  margin: 10px 0;
+  padding: 8px 20px;
+  background: #00000033;
+  font-family: "SourceSansPro Light";
+  color: white !important;
+  width: 80%;
+  border: solid 1px ${({ theme }) => theme.colors.secondary};
+  &:focus {
+    background: #00000033;
+    border: solid 1px ${({ theme }) => theme.colors.primary};
+  }
+`;
 
 export function useWallet() {
   const { wallet, connected, provider, select } = useContext(WalletContext);
